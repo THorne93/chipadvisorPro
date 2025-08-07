@@ -1,8 +1,12 @@
 // app/search/page.tsx
 import SearchPageClient from './SearchPageClient';
 import { searchRestaurantsByName } from '@/lib';
-export default async function SearchPage({ searchParams }: { searchParams: { query?: string } }) {
-  const query = searchParams.query || '';
+
+type SearchParams = Promise<{ query?: string }>;
+
+export default async function SearchPage({ searchParams }: { searchParams: SearchParams }) {
+  const params = await searchParams;
+  const query = params.query || '';
 
   const restaurants = await searchRestaurantsByName(query);
 
