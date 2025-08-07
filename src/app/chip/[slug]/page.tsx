@@ -21,7 +21,7 @@ export default async function ChipPage({ params }: any) {
     const readableChip = slugNamePart
         .replace(/-/g, ' ');
 
-    const { reviews, ratingStats, rankingResult } = await getChipData(chipId);
+   // const { reviews, ratingStats, rankingResult } = await getChipData(chipId);
 
     const chipLocation = reviews[0]?.chip?.location as {
         country?: string;
