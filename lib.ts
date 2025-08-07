@@ -53,13 +53,15 @@ export async function login(values: { email: string; password: string }) {
     role: user.role as Role
   };
   const session = await encrypt({ user: sessionUser, expires });
+  const cookieStore = await cookies();
   // Save the session in a cookie
-  cookies().set("session", session, { expires, httpOnly: true });
+  cookieStore.set("session", session, { expires, httpOnly: true });
 }
 
 export async function logout() {
   // Destroy the session
-  cookies().set("session", "", { expires: new Date(0) });
+  const cookieStore = await cookies();
+  cookieStore.set("session", "", { expires: new Date(0) });
 }
 
 export async function getSession() {
