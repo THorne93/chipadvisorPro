@@ -103,8 +103,8 @@ export default function Reviews({ reviews, isAdmin }: ReviewsProps) {
       <ul>
         {paginatedReviews.map((review) => {
           const isExpanded = expandedReviewId === review.id;
-          const location = review.chip.location;
-          const slug = slugify(location?.country);
+          const location = review.chip.location as { country?: string };
+          const slug = slugify(location?.country || '');
 
           return (
             <li
@@ -129,9 +129,8 @@ export default function Reviews({ reviews, isAdmin }: ReviewsProps) {
                 </div>
 
                 <div
-                  className={`text-gray-700 relative transition-all duration-300 ease-in-out ${
-                    isExpanded ? '' : 'max-h-12 overflow-hidden'
-                  }`}
+                  className={`text-gray-700 relative transition-all duration-300 ease-in-out ${isExpanded ? '' : 'max-h-12 overflow-hidden'
+                    }`}
                   dangerouslySetInnerHTML={{ __html: review.content }}
                 ></div>
 
@@ -166,9 +165,8 @@ export default function Reviews({ reviews, isAdmin }: ReviewsProps) {
           <button
             key={page}
             onClick={() => setCurrentPage(page)}
-            className={`px-3 py-1 text-sm border rounded ${
-              currentPage === page ? 'bg-gray-800 text-white' : 'bg-white text-gray-800'
-            }`}
+            className={`px-3 py-1 text-sm border rounded ${currentPage === page ? 'bg-gray-800 text-white' : 'bg-white text-gray-800'
+              }`}
           >
             {page}
           </button>
