@@ -7,7 +7,7 @@ import React, { Suspense } from 'react';
 type Params = Promise<{ slug: string }>
 
 export default async function CountryPage({ params }: { params: Params }) {
-    const { slug } = await params;
+  const { slug } = await params;
   const [rawReviews, countryRank, countryRating] = await Promise.all([
     getCountryChips(slug),
     getCountryRank(slug),
@@ -36,8 +36,8 @@ export default async function CountryPage({ params }: { params: Params }) {
             <dd className="ml-2">
 
               // @ts-ignore
-              {(countryRating[0]?.average_country_score?.toString() ?? "0")} / 5
-            </dd>
+              {((countryRating as any)[0]?.average_country_score?.toString() ?? "0")} / 5         
+                 </dd>
           </div>
           <div className="flex">
             <dt className="font-semibold">Total Reviews:{'\u00A0'}</dt>
@@ -48,7 +48,7 @@ export default async function CountryPage({ params }: { params: Params }) {
             <dd className="ml-2">
 
               // @ts-ignore
-              {Number(countryRank[0]?.rank) ?? 0} / {Number(countryRank[0]?.total_countries) ?? 0}
+              {Number((countryRank as any)[0]?.rank) ?? 0} / {Number((countryRank as any)[0]?.total_countries) ?? 0}
             </dd>
           </div>
         </dl>

@@ -35,7 +35,7 @@ export default async function CityPage({ params }: { params: Params }) {
             <dt className="font-semibold">Average Rating:{'\u00A0'}</dt>
 
             // @ts-ignore
-            <dd className="ml-2">{cityRating[0]?.average_city_score ?? 0} / 5</dd>
+            <dd className="ml-2">{(cityRating as { average_city_score: number }[])[0]?.average_city_score ?? 0} / 5</dd>
           </div>
           <div className="flex">
             <dt className="font-semibold">Total Reviews:{'\u00A0'}</dt>
@@ -44,10 +44,9 @@ export default async function CityPage({ params }: { params: Params }) {
           <div className="flex">
             <dt className="font-semibold">World Ranking:{'\u00A0'}</dt>
             <dd className="ml-2">
-              
+
               // @ts-ignore
-              {Number(cityRank[0]?.rank) ?? 0} / {Number(cityRank[0]?.total_cities) ?? 0}
-            </dd>
+              {Number((cityRank as any)[0]?.rank) ?? 0} / {Number((cityRank as any)[0]?.total_cities) ?? 0}            </dd>
           </div>
         </dl>
 
