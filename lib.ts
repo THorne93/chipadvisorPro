@@ -253,16 +253,18 @@ FROM "Chip" c
 LEFT JOIN "Rating" r ON r.chip_id = c.id
 WHERE c.location->>'city' = ${readableCity};`
 }
+type ChipRow = {
+  chip_id: number;
+  restaurant_name: string;
+  location: any;
+  img_url: string;
+};
+
 export async function searchRestaurantsByName(name: string) {
   try {
     const searchTerm = `%${name.toLowerCase()}%`;
 
-    const result = await prisma.$queryRaw<{
-      chip_id: number;
-      restaurant_name: string;
-      location: any;
-      img_url: string;
-    }[]>`
+    const result = await prisma.$queryRaw<ChipRow[]>`
       SELECT
         c.id AS chip_id,
         c.name AS restaurant_name,
@@ -276,7 +278,7 @@ export async function searchRestaurantsByName(name: string) {
       ORDER BY c.id;
     `;
 
-    return result.map(row => ({
+    return result.map((row: ChipRow) => ({
       id: row.chip_id,
       name: row.restaurant_name,
       location: row.location,
@@ -287,6 +289,7 @@ export async function searchRestaurantsByName(name: string) {
     return [];
   }
 }
+
 
 
 export async function getPendingRestaurants() {
