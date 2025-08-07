@@ -13,7 +13,7 @@ export default async function CityPage({ params }: { params: Params }) {
     getCityRating(slug),
   ]);
 
-  // @ts-nocheck
+  // @ts-ignore
   const reviews = rawReviews.map((r: any) => ({
     ...r,
     average_rating: Number(r.average_rating),
@@ -34,7 +34,7 @@ export default async function CityPage({ params }: { params: Params }) {
           <div className="flex">
             <dt className="font-semibold">Average Rating:{'\u00A0'}</dt>
 
-            // @ts-nocheck
+            // @ts-ignore
             <dd className="ml-2">{cityRating[0]?.average_city_score ?? 0} / 5</dd>
           </div>
           <div className="flex">
@@ -45,7 +45,7 @@ export default async function CityPage({ params }: { params: Params }) {
             <dt className="font-semibold">World Ranking:{'\u00A0'}</dt>
             <dd className="ml-2">
               
-              // @ts-nocheck
+              // @ts-ignore
               {Number(cityRank[0]?.rank) ?? 0} / {Number(cityRank[0]?.total_cities) ?? 0}
             </dd>
           </div>
