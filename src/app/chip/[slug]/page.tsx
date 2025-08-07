@@ -9,13 +9,9 @@ import NewReview from './NewReview';
 import { Chip, Review, Rating } from '@prisma/client';
 import slugify from 'slugify';
 
-type Props = {
-    params: {
-        slug: string;
-    };
-};
 
-export default async function ChipPage({ params }: Props) {
+
+export default async function ChipPage({ params }: any) {
     const session = await getSession();
     const isAdmin = session?.user.role === 'ADMIN';
     const userId = session?.user?.id || null;
