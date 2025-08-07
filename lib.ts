@@ -257,7 +257,12 @@ export async function searchRestaurantsByName(name: string) {
   try {
     const searchTerm = `%${name.toLowerCase()}%`;
 
-    const result = await prisma.$queryRaw`
+    const result = await prisma.$queryRaw<{
+      chip_id: number;
+      restaurant_name: string;
+      location: any;
+      img_url: string;
+    }[]>`
       SELECT
         c.id AS chip_id,
         c.name AS restaurant_name,
@@ -282,6 +287,7 @@ export async function searchRestaurantsByName(name: string) {
     return [];
   }
 }
+
 
 export async function getPendingRestaurants() {
   return await prisma.pending.findMany();
