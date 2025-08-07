@@ -4,7 +4,12 @@ import React from 'react';
 import slugify from 'slugify';
 import Link from 'next/link';
 
-export default function SearchPageClient({ query, restaurants }) {
+type SearchPageClientProps = {
+    query: string;
+    restaurants: any[]; // or a more specific type if you have one
+};
+
+export default function SearchPageClient({ query, restaurants }: SearchPageClientProps) {
     return (
         <div className="p-6 max-w-4xl mx-auto">
             <h1 className="text-2xl font-bold mb-6">Search Results for: {query}</h1>
