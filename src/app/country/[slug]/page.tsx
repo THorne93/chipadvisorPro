@@ -13,7 +13,7 @@ export default async function CountryPage({ params }: { params: Params }) {
     getCountryRank(slug),
     getCountryRating(slug),
   ]);
-  // @ts-nocheck
+  // @ts-ignore
   const reviews = rawReviews.map((r: any) => ({
     ...r,
     average_rating: Number(r.average_rating),
@@ -35,7 +35,7 @@ export default async function CountryPage({ params }: { params: Params }) {
             <dt className="font-semibold">Average Rating:{'\u00A0'}</dt>
             <dd className="ml-2">
 
-              // @ts-nocheck
+              // @ts-ignore
               {(countryRating[0]?.average_country_score?.toString() ?? "0")} / 5
             </dd>
           </div>
@@ -47,7 +47,7 @@ export default async function CountryPage({ params }: { params: Params }) {
             <dt className="font-semibold">World Ranking:{'\u00A0'}</dt>
             <dd className="ml-2">
 
-              // @ts-nocheck
+              // @ts-ignore
               {Number(countryRank[0]?.rank) ?? 0} / {Number(countryRank[0]?.total_countries) ?? 0}
             </dd>
           </div>
