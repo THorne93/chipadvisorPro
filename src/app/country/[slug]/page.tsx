@@ -1,0 +1,57 @@
+import { prisma } from "@/lib/prisma";
+import { getCountryChips, getCountryRank, getCountryRating } from "@/lib";
+import CountryList from "../../components/CountryList";
+import React, { Suspense } from 'react';
+
+
+
+export default async function CountryPage({ params }: { params: { slug: string } }) {
+  const { slug } = params;
+  const [rawReviews, countryRank, countryRating] = await Promise.all([
+    getCountryChips(slug),
+    getCountryRank(slug),
+    getCountryRating(slug),
+  ]);
+  const reviews = rawReviews.map((r: any) => ({
+    ...r,
+    average_rating: Number(r.average_rating),
+    total_ratings: Number(r.total_ratings),
+  }));
+  console.log(reviews)
+  const actualParams = await params;
+  const readableCountry = actualParams.slug
+    .replace(/-/g, ' ')
+    .replace(/\b\w/g, (c: string) => c.toUpperCase());
+
+  return (
+    <div className="mt-2 border border-black mx-auto w-3/4 rounded-md">
+      <div className="my-2 px-4">
+        <h1 className="text-3xl py-1 font-bold">{readableCountry}</h1>
+
+        <dl className="text-xl space-y-1">
+          <div className="flex">
+            <dt className="font-semibold">Average Rating:{'\u00A0'}</dt>
+            <dd className="ml-2">
+              {(countryRating[0]?.average_country_score?.toString() ?? "0")} / 5
+            </dd>
+          </div>
+          <div className="flex">
+            <dt className="font-semibold">Total Reviews:{'\u00A0'}</dt>
+            <dd className="ml-2">{reviews.length}</dd>
+          </div>
+          <div className="flex">
+            <dt className="font-semibold">World Ranking:{'\u00A0'}</dt>
+            <dd className="ml-2">
+              {Number(countryRank[0]?.rank) ?? 0} / {Number(countryRank[0]?.total_countries) ?? 0}
+            </dd>
+          </div>
+        </dl>
+
+      </div>
+      <Suspense fallback={<div className="text-center p-10">Loading reviews...</div>}>
+
+        <CountryList reviews={reviews} />
+      </Suspense>
+    </div>
+  );
+}

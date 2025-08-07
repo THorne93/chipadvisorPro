@@ -1,0 +1,80 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+model User {
+  id       Int      @id @default(autoincrement())
+  username String   @unique
+  email    String   @unique
+  role     Role     @default(USER)
+  password String
+  reviews  Review[] @relation("fk_reviews_author_users_id")
+  ratings  Rating[]
+}
+
+model Chip {
+  id      Int      @id @default(autoincrement())
+  name    String
+  location  Json?
+  img_url String
+  reviews Review[] @relation("fk_reviews_chip_chips_id")
+  ratings Rating[]
+}
+
+
+model Pending {
+  id        Int     @id @default(autoincrement())
+  authorId  Int     
+  title     String
+  content   String
+  score     Float
+  createdAt DateTime @default(now())
+  name      String
+  location  Json?
+  img_url   String
+}
+
+model Review {
+  id        Int     @id @default(autoincrement())
+  authorId  Int     @map("author")
+  chipId    Int     @map("chip")
+  title     String
+  content   String
+  createdAt DateTime @default(now())
+
+  author    User     @relation("fk_reviews_author_users_id", fields: [authorId], references: [id])
+  chip      Chip     @relation("fk_reviews_chip_chips_id", fields: [chipId], references: [id])
+  rating    Rating?  // optional one-to-one
+
+  @@index([authorId])
+  @@index([chipId])
+}
+
+model Rating {
+  id        Int      @id @default(autoincrement())
+  chipId    Int?     @map("chip_id")
+  userId    Int?     @map("user_id")
+  review_id Int?     @map("review_id") @unique
+
+  score     Float
+  createdAt DateTime @default(now())
+
+  chip      Chip?    @relation(fields: [chipId], references: [id])
+  user      User?    @relation(fields: [userId], references: [id])
+  review    Review?  @relation(fields: [review_id], references: [id])
+
+  @@index([chipId])
+  @@index([userId])
+  @@index([review_id])
+}
+
