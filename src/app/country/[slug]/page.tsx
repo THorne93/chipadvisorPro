@@ -4,9 +4,10 @@ import CountryList from "../../components/CountryList";
 import React, { Suspense } from 'react';
 
 
+type Params = Promise<{ slug: string }>
 
-export default async function CountryPage({ params }: { params: { slug: string } }) {
-  const { slug } = params;
+export default async function CountryPage({ params }: { params: Params }) {
+    const { slug } = await params;
   const [rawReviews, countryRank, countryRating] = await Promise.all([
     getCountryChips(slug),
     getCountryRank(slug),
