@@ -104,7 +104,7 @@ export default function Reviews({ reviews, isAdmin }: ReviewsProps) {
         {paginatedReviews.map((review) => {
           const isExpanded = expandedReviewId === review.id;
           const location = review.chip.location;
-          const slug = slugify(location.country);
+          const slug = slugify(location?.country);
 
           return (
             <li

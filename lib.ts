@@ -336,6 +336,7 @@ export async function rejectRestaurant() {
 }
 
 export async function getChipData(chipId: number) {
+  // Main data queries together:
   const [reviews, ratingStats, rankingResult] = await Promise.all([
     prisma.review.findMany({
       where: { chipId },
@@ -369,5 +370,77 @@ export async function getChipData(chipId: number) {
     `,
   ]);
 
-  return { reviews, ratingStats, rankingResult };
+  // Extract location info safely
+  const chipLocation = reviews[0]?.chip?.location as
+    | { country?: string; city?: string; address?: string }
+    | undefined;
+
+  // Ranking queries by country and city, if available
+  let rankingCountry = null;
+  let rankingCity = null;
+
+  if (chipLocation?.country) {
+    rankingCountry = await prisma.$queryRaw<
+      { rank: number; totalCount: number }[]
+    >`
+      WITH ranked_chips AS (
+        SELECT
+          c.id AS "chipId",
+          AVG(r.score) AS "avgScore",
+          RANK() OVER (ORDER BY AVG(r.score) DESC) AS rank
+        FROM "Chip" c
+        LEFT JOIN "Rating" r ON r."chip_id" = c.id
+        WHERE c.location->>'country' = ${chipLocation.country}
+        GROUP BY c.id
+      )
+      SELECT
+        rc.rank,
+        (
+          SELECT COUNT(DISTINCT c2.id)
+          FROM "Chip" c2
+          LEFT JOIN "Rating" r2 ON r2."chip_id" = c2.id
+          WHERE c2.location->>'country' = ${chipLocation.country}
+            AND r2.score IS NOT NULL
+        ) AS totalCount
+      FROM ranked_chips rc
+      WHERE rc."chipId" = ${chipId};
+    `;
+  }
+
+  if (chipLocation?.city) {
+    rankingCity = await prisma.$queryRaw<
+      { rank: number; totalCount: number }[]
+    >`
+      WITH ranked_chips AS (
+        SELECT
+          c.id AS "chipId",
+          AVG(r.score) AS "avgScore",
+          RANK() OVER (ORDER BY AVG(r.score) DESC) AS rank
+        FROM "Chip" c
+        LEFT JOIN "Rating" r ON r."chip_id" = c.id
+        WHERE c.location->>'city' = ${chipLocation.city}
+        GROUP BY c.id
+      )
+      SELECT
+        rc.rank,
+        (
+          SELECT COUNT(DISTINCT c2.id)
+          FROM "Chip" c2
+          LEFT JOIN "Rating" r2 ON r2."chip_id" = c2.id
+          WHERE c2.location->>'city' = ${chipLocation.city}
+            AND r2.score IS NOT NULL
+        ) AS totalCount
+      FROM ranked_chips rc
+      WHERE rc."chipId" = ${chipId};
+    `;
+  }
+
+  return {
+    reviews,
+    ratingStats,
+    rankingResult,
+    chipLocation,
+    rankingCountry,
+    rankingCity,
+  };
 }
