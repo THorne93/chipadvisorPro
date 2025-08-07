@@ -4,7 +4,7 @@ import QuillReview from './QuillReview';
 import { Button } from 'antd';
 import Link from 'next/link';
 
-import { getSession } from '../../../../lib'
+import { getSession, getChipData } from '../../../../lib'
 import NewReview from './NewReview';
 import { Chip, Review, Rating } from '@prisma/client';
 import slugify from 'slugify';
@@ -21,38 +21,7 @@ export default async function ChipPage({ params }: any) {
     const readableChip = slugNamePart
         .replace(/-/g, ' ');
 
-    const [reviews, ratingStats, rankingResult] = await Promise.all([
-        prisma.review.findMany({
-            where: { chipId },
-            include: {
-                chip: true,
-                rating: true,
-                author: true,
-            },
-        }),
-        prisma.rating.aggregate({
-            where: { chipId },
-            _avg: { score: true },
-        }),
-        prisma.$queryRaw<
-            { rank: number; totalCount: number }[]
-        >`
-      WITH ranked_chips AS (
-        SELECT c.id AS "chipId", AVG(r.score) AS "avgScore",
-          RANK() OVER (ORDER BY AVG(r.score) DESC) AS rank
-        FROM "Chip" c
-        LEFT JOIN "Rating" r ON r."chip_id" = c.id
-        GROUP BY c.id
-      )
-      SELECT rc.rank,
-        (SELECT COUNT(DISTINCT c2.id)
-         FROM "Chip" c2
-         LEFT JOIN "Rating" r2 ON r2."chip_id" = c2.id
-         WHERE r2.score IS NOT NULL) AS totalCount
-      FROM ranked_chips rc
-      WHERE rc."chipId" = ${chipId};
-    `,
-    ]);
+    const { reviews, ratingStats, rankingResult } = await getChipData(chipId);
 
     const chipLocation = reviews[0]?.chip?.location as {
         country?: string;
