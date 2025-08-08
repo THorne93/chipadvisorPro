@@ -18,6 +18,7 @@ interface User {
 
 export default function NavBar({ session }: { session: User | null }) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [loginModalOpen, setLoginModalOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [searchValue, setSearchValue] = useState('');
   const [hydrated, setHydrated] = useState(false);
@@ -77,7 +78,7 @@ export default function NavBar({ session }: { session: User | null }) {
       </Button>
     </>
   ) : (
-    <Button type="primary" onClick={() => setMenuOpen(true)}>
+    <Button type="primary" onClick={() => setLoginModalOpen(true)}>
       Login
     </Button>
   );
@@ -165,7 +166,7 @@ export default function NavBar({ session }: { session: User | null }) {
           </div>
         </div>
       )}
-      <LoginModal open={menuOpen} onClose={() => setMenuOpen(false)} />
+      <LoginModal open={loginModalOpen} onClose={() => setLoginModalOpen(false)} />
     </Header>
   );
 }
