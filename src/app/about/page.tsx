@@ -24,7 +24,9 @@ export default function AboutPage() {
                     <li>
                         1.0 - Original site basics, main purpose here is to just get it online
                         and see how it functions.
-
+                    </li>
+                    <li>
+                        1.0.1 - 09/08/25 - Various little bug fixes (login modal opening when it wants, restaurant error handling, drop down menu not closing)
                     </li>
                 </ul>
             </div>

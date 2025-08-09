@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { Button, Layout, Menu, Input } from 'antd';
 import { MenuOutlined, CloseOutlined } from '@ant-design/icons';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import LoginModal from './LoginModal';
 const { Header } = Layout;
 const { Search } = Input;
@@ -24,13 +24,20 @@ export default function NavBar({ session }: { session: User | null }) {
   const [hydrated, setHydrated] = useState(false);
 
   const router = useRouter();
+  const pathname = usePathname(); // ✅ Detect route changes
 
   useEffect(() => {
     setIsMobile(window.innerWidth < 768);
-    window.addEventListener('resize', () => setIsMobile(window.innerWidth < 768));
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', handleResize);
     setHydrated(true);
-    return () => window.removeEventListener('resize', () => { });
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  // ✅ Close mobile menu whenever the route changes
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [pathname]);
 
   const handleSearch = (value: string) => {
     if (!value.trim()) return;
