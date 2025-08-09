@@ -11,8 +11,11 @@ export default async function ChipPage({ params }: { params: Params }) {
     const isAdmin = session?.user.role === 'ADMIN';
     const userId = session?.user?.id || null;
 
-    const [slugNamePart, idPart] = slug.split('-');
-    const chipId = parseInt(idPart, 10);
+    const parts = slug.split('-');
+    const idPart = parts.pop(); // last element → "1"
+    const slugNamePart = parts.join('-'); // rest → "Gottan-Grill"
+
+    const chipId = parseInt(idPart ?? '', 10);
     const readableChip = slugNamePart.replace(/-/g, ' ');
 
     const {
